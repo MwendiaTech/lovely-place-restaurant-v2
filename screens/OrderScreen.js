@@ -94,11 +94,14 @@ export default function OrderScreen({ navigation }) {
       'Rate your experience',
       `How was Order #${order.id}?`,
       [
-        { text: '⭐', onPress: () => addNotification(`Rated Order #${order.id} ⭐`) },
-        { text: '⭐⭐', onPress: () => addNotification(`Rated Order #${order.id} ⭐⭐`) },
-        { text: '⭐⭐⭐', onPress: () => addNotification(`Rated Order #${order.id} ⭐⭐⭐`) },
+        { text: '⭐ 1 Star',      onPress: () => addNotification(`Rated Order #${order.id}: 1⭐`) },
+        { text: '⭐⭐ 2 Stars',     onPress: () => addNotification(`Rated Order #${order.id}: 2⭐`) },
+        { text: '⭐⭐⭐ 3 Stars',    onPress: () => addNotification(`Rated Order #${order.id}: 3⭐`) },
+        { text: '⭐⭐⭐⭐ 4 Stars',   onPress: () => addNotification(`Rated Order #${order.id}: 4⭐`) },
+        { text: '⭐⭐⭐⭐⭐ 5 Stars',  onPress: () => addNotification(`Rated Order #${order.id}: 5⭐`) },
         { text: 'Cancel', style: 'cancel' },
-      ]
+      ],
+      { cancelable: true }
     );
   };
 
