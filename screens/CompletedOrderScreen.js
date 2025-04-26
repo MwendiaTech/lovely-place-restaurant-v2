@@ -9,14 +9,15 @@ import {
   StatusBar,
   StyleSheet,
 } from 'react-native';
-import { ThemeContext } from '../context/ThemeContext';
-import mealImages from '../assets/images/meals';
+import FontAwesome            from 'react-native-vector-icons/FontAwesome';
+import { ThemeContext }       from '../context/ThemeContext';
+import mealImages             from '../assets/images/meals';
 
 export default function CompletedOrderScreen({ route, navigation }) {
   const { theme } = useContext(ThemeContext);
-  const order = route.params.completedOrder;
+  const order     = route.params.completedOrder;
 
-  const renderMeal = ({ item }) => (
+  const renderItem = ({ item }) => (
     <View style={[styles.itemRow, { backgroundColor: theme.colors.card }]}>
       <Image
         source={mealImages[item.image.replace('.png','')]}
@@ -33,24 +34,42 @@ export default function CompletedOrderScreen({ route, navigation }) {
     </View>
   );
 
-  const Header = () => (
-    <View style={styles.headerContainer}>
+  return (
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <StatusBar
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
         translucent
         backgroundColor="transparent"
       />
+
       <Text style={[styles.title, { color: theme.colors.text }]}>
         Order #{order.id}
       </Text>
       <Text style={[styles.date, { color: theme.colors.text }]}>
         📅 {order.date}
       </Text>
-    </View>
-  );
 
-  const Footer = () => (
-    <View style={styles.footerContainer}>
+      {order.rating != null && (
+        <View style={styles.ratingRow}>
+          {[1,2,3,4,5].map(i => (
+            <FontAwesome
+              key={i}
+              name="star"
+              size={20}
+              color={i <= order.rating ? '#FFC107' : '#E0E0E0'}
+              style={{ marginRight: 4 }}
+            />
+          ))}
+        </View>
+      )}
+
+      <FlatList
+        data={order.meals}
+        renderItem={renderItem}
+        keyExtractor={m => m.id.toString()}
+        style={styles.list}
+      />
+
       <Text style={[styles.total, { color: theme.colors.text }]}>
         Total Paid: £{order.total.toFixed(2)}
       </Text>
@@ -84,46 +103,20 @@ export default function CompletedOrderScreen({ route, navigation }) {
       </TouchableOpacity>
     </View>
   );
-
-  return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <FlatList
-        data={order.meals}
-        renderItem={renderMeal}
-        keyExtractor={item => item.id.toString()}
-        ListHeaderComponent={Header}
-        ListFooterComponent={Footer}
-        contentContainerStyle={styles.listContent}
-      />
-    </View>
-  );
 }
 
 const styles = StyleSheet.create({
-  container:     { flex: 1 },
-  listContent:   { padding: 20 },
-
-  headerContainer: { marginBottom: 20 },
-  title:           { fontSize: 24, fontWeight: '600', marginBottom: 4 },
-  date:            { fontSize: 16, marginBottom: 16 },
-
-  itemRow: {
-    flexDirection: 'row',
-    padding: 10,
-    borderRadius: 6,
-    marginBottom: 10,
-    alignItems: 'center',
-    elevation: 2,
-  },
-  thumb:    { width: 50, height: 50, borderRadius: 4, marginRight: 12 },
-  itemName: { fontSize: 16, fontWeight: '500' },
-
-  footerContainer: { marginTop: 20 },
-  total:           { fontSize: 18, fontWeight: 'bold', textAlign: 'right', marginBottom: 20 },
-
-  section:      { marginBottom: 20 },
-  sectionTitle: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
-
-  button:     { padding: 14, borderRadius: 6, alignItems: 'center', elevation: 2 },
-  buttonText: { color: '#FFF', fontSize: 16, fontWeight: '600' },
+  container:     { flex: 1, padding: 20 },
+  title:         { fontSize: 24, fontWeight: '600', marginBottom: 4 },
+  date:          { fontSize: 16, marginBottom: 8 },
+  ratingRow:     { flexDirection: 'row', marginBottom: 12 },
+  list:          { marginBottom: 20 },
+  itemRow:       { flexDirection: 'row', padding: 10, borderRadius: 6, marginBottom: 10, alignItems: 'center', elevation: 2 },
+  thumb:         { width: 50, height: 50, borderRadius: 4, marginRight: 12 },
+  itemName:      { fontSize: 16, fontWeight: '500' },
+  total:         { fontSize: 18, fontWeight: 'bold', textAlign: 'right', marginBottom: 20 },
+  section:       { marginBottom: 20 },
+  sectionTitle:  { fontSize: 16, fontWeight: '600', marginBottom: 8 },
+  button:        { padding: 14, borderRadius: 6, alignItems: 'center', elevation: 2 },
+  buttonText:    { color: '#FFF', fontSize: 16, fontWeight: '600' },
 });
